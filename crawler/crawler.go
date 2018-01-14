@@ -1,6 +1,7 @@
 package crawler
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -32,5 +33,8 @@ func Crawl(url string) (models.Menus, error) {
 		menu.Date.Set(dateStr)
 		menus = append(menus, menu)
 	})
-	return menus, nil
+	if len(menus) > 0 {
+		return menus, nil
+	}
+	return menus, errors.New("Bu tarihte hic menu yok")
 }
