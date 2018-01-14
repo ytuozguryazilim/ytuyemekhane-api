@@ -1,12 +1,13 @@
 package routers
 
 import (
-	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
 	"github.com/GnuYtuce/ytuyemekhane-api/crawler"
 	"github.com/GnuYtuce/ytuyemekhane-api/models"
+	"github.com/GnuYtuce/ytuyemekhane-api/sender"
 	"github.com/GnuYtuce/ytuyemekhane-api/util"
 	"github.com/julienschmidt/httprouter"
 )
@@ -28,15 +29,28 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 	menus, _ := crawler.Crawl(url)
 	menu, err := menus.SearchMenuByDate(date)
 	if err != nil {
-		sendJSON(w, models.Menu{})
+		sender.JSON(w, models.Menu{})
 		return
 	}
-	sendJSON(w, menu)
+	sender.JSON(w, menu)
 }
 
 // FoodListByCertainYear : belli bir yila gore yemek listesi donulecek.
 func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Write([]byte("FoodListByCertainYear function"))
+	var AllMenus models.Menus
+	year, _ := util.StringToInt(p.ByName("year"))
+	for month := 1; month <= 12; month++ {
+		url := YtuYemekhaneURL + util.CreateVirtualPATH(month, year)
+		menus, err := crawler.Crawl(url)
+		if err != nil {
+			continue
+		}
+		AllMenus = append(AllMenus, menus...)
+	}
+	if len(AllMenus) > 0 {
+		sender.JSON(w, AllMenus)
+	}
+	sender.Err(w, errors.New("Bu yila ait hic menu yok"))
 }
 
 // FoodListByCertainYearAndMonth : belli bir yil ve aya gore yemek listesi donulecek.
@@ -44,8 +58,12 @@ func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p htt
 	month, _ := util.StringToInt(p.ByName("month"))
 	year, _ := util.StringToInt(p.ByName("year"))
 	url := YtuYemekhaneURL + util.CreateVirtualPATH(month, year)
-	menus, _ := crawler.Crawl(url)
-	sendJSON(w, menus)
+	menus, err := crawler.Crawl(url)
+	if err != nil {
+		sender.Err(w, err)
+		return
+	}
+	sender.JSON(w, menus)
 }
 
 // FoodListByCertainTime : belli bir zamana gore yemek listesi donulecek.
@@ -59,19 +77,15 @@ func FoodListByCertainTime(w http.ResponseWriter, r *http.Request, p httprouter.
 		Year:  year,
 	}
 	url := YtuYemekhaneURL + util.CreateVirtualPATH(date.Month, date.Year)
-	menus, _ := crawler.Crawl(url)
-	menu, err := menus.SearchMenuByDate(date)
+	menus, err := crawler.Crawl(url)
 	if err != nil {
-		sendJSON(w, models.Menu{})
+		sender.Err(w, err)
 		return
 	}
-	sendJSON(w, menu)
-}
-
-// sendJSON :
-func sendJSON(w http.ResponseWriter, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	jContent, _ := json.MarshalIndent(data, "", " ")
-	w.Write(jContent)
+	menu, err := menus.SearchMenuByDate(date)
+	if err != nil {
+		sender.Err(w, err)
+		return
+	}
+	sender.JSON(w, menu)
 }
