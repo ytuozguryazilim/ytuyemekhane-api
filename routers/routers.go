@@ -41,7 +41,11 @@ func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.
 
 // FoodListByCertainYearAndMonth : belli bir yil ve aya gore yemek listesi donulecek.
 func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Write([]byte("FoodListByCertainYearAndMonth function"))
+	month, _ := util.StringToInt(p.ByName("month"))
+	year, _ := util.StringToInt(p.ByName("year"))
+	url := YtuYemekhaneURL + util.CreateVirtualPATH(month, year)
+	menus, _ := crawler.Crawl(url)
+	sendJSON(w, menus)
 }
 
 // FoodListByCertainTime : belli bir zamana gore yemek listesi donulecek.
@@ -65,7 +69,7 @@ func FoodListByCertainTime(w http.ResponseWriter, r *http.Request, p httprouter.
 }
 
 // sendJSON :
-func sendJSON(w http.ResponseWriter, data models.Menu) {
+func sendJSON(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 	jContent, _ := json.MarshalIndent(data, "", " ")
