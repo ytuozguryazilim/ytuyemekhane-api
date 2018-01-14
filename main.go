@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -14,7 +15,7 @@ var (
 )
 
 func main() {
-	port := flag.String("port", ":8080", "http service port")
+	port := flag.String("port", os.Getenv("PORT"), "http service port")
 	flag.Parse()
 	log.Printf("Go server listening on port %s", *port)
 
@@ -24,7 +25,7 @@ func main() {
 	r.GET("/:year/:month", FoodListByCertainYearAndMonth)
 	r.GET("/:year/:month/:day", FoodListByCertainTime)
 
-	log.Fatal(http.ListenAndServe(*port, r))
+	log.Fatal(http.ListenAndServe(":"+*port, r))
 }
 
 // FoodListByCurrentTime : suanki zamana gore yemek listesi donulecek.
