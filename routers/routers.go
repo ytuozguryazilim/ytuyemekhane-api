@@ -26,10 +26,14 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 		Year:  now.Year(),
 	}
 	url := YtuYemekhaneURL + util.CreateVirtualPATH(date.Month, date.Year)
-	menus, _ := crawler.Crawl(url)
+	menus, err := crawler.Crawl(url)
+	if err != nil {
+		sender.Err(w, err)
+		return
+	}
 	menu, err := menus.SearchMenuByDate(date)
 	if err != nil {
-		sender.JSON(w, models.Menu{})
+		sender.JSON(w, err)
 		return
 	}
 	sender.JSON(w, menu)
@@ -49,6 +53,7 @@ func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.
 	}
 	if len(AllMenus) > 0 {
 		sender.JSON(w, AllMenus)
+		return
 	}
 	sender.Err(w, errors.New("Bu yila ait hic menu yok"))
 }
