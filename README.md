@@ -1,4 +1,9 @@
-# ytuyemekhane-api ![Heroku](https://heroku-badge.herokuapp.com/?app=ytuyemekhane-api)
+# ytuyemekhane-api
+[![License (GPL version 3)](https://img.shields.io/badge/license-GNU%20GPL%20version%203-red.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[![Go Report Card](https://goreportcard.com/badge/GnuYtuce/ytuyemekhane-api)](https://goreportcard.com/report/GnuYtuce/ytuyemekhane-api)
+[![GoDoc](https://godoc.org/github.com/GnuYtuce/ytuyemekhane-api?status.svg)](https://godoc.org/github.com/GnuYtuce/ytuyemekhane-api/)
+![Heroku](https://heroku-badge.herokuapp.com/?app=ytuyemekhane-api)
+
 Web service of "ytu yemekhane" http://www.sks.yildiz.edu.tr/
 
 # API - Routers
