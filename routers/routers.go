@@ -2,8 +2,8 @@ package routers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/GnuYtuce/ytuyemekhane-api/crawler"
 	"github.com/GnuYtuce/ytuyemekhane-api/models"
@@ -18,32 +18,20 @@ var (
 
 // FoodListByCurrentTime : suanki zamana gore yemek listesi donulecek.
 func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	/*
-		now := time.Now()
-		date := models.Date{
-			Day:   now.Day(),
-			Month: int(now.Month()),
-			Year:  now.Year(),
-		}
-	*/
+	now := time.Now()
 	date := models.Date{
-		Day:   18,
-		Month: 1,
-		Year:  2018,
+		Day:   now.Day(),
+		Month: int(now.Month()),
+		Year:  now.Year(),
 	}
-	fmt.Println(date)
 	url := YtuYemekhaneURL + util.CreateVirtualPATH(date.Month, date.Year)
 	menus, _ := crawler.Crawl(url)
-	for _, menu := range menus {
-		fmt.Println("##########")
-		menu.Print()
-		fmt.Println(date.ToString())
-		if menu.Date.ToString() == date.ToString() {
-			sendJSON(w, menu)
-			return
-		}
+	menu, err := menus.SearchMenuByDate(date)
+	if err != nil {
+		sendJSON(w, models.Menu{})
+		return
 	}
-	sendJSON(w, models.Menu{})
+	sendJSON(w, menu)
 }
 
 // FoodListByCertainYear : belli bir yila gore yemek listesi donulecek.
@@ -58,7 +46,22 @@ func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p htt
 
 // FoodListByCertainTime : belli bir zamana gore yemek listesi donulecek.
 func FoodListByCertainTime(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Write([]byte("FoodListByCertainTime function"))
+	day, _ := util.StringToInt(p.ByName("day"))
+	month, _ := util.StringToInt(p.ByName("month"))
+	year, _ := util.StringToInt(p.ByName("year"))
+	date := models.Date{
+		Day:   day,
+		Month: month,
+		Year:  year,
+	}
+	url := YtuYemekhaneURL + util.CreateVirtualPATH(date.Month, date.Year)
+	menus, _ := crawler.Crawl(url)
+	menu, err := menus.SearchMenuByDate(date)
+	if err != nil {
+		sendJSON(w, models.Menu{})
+		return
+	}
+	sendJSON(w, menu)
 }
 
 // sendJSON :
