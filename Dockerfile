@@ -1,7 +1,9 @@
 FROM golang
 
-ADD . /go/src/ytuyemekhane-api
-RUN go install ytuyemekhane-api
+ADD . /go/src/github.com/GnuYtuce/ytuyemekhane-api
+RUN go install github.com/GnuYtuce/ytuyemekhane-api
+
+ENV PORT 8080
 
 ENTRYPOINT [ "/go/bin/ytuyemekhane-api" ]
 
