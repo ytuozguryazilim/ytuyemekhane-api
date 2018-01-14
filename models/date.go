@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/GnuYtuce/ytuyemekhane-api/util"
@@ -15,7 +16,7 @@ type Date struct {
 
 // ToString : Date veri yapisinin elemanlari "string" olarak doner. Misal "1.12.1999"
 func (d Date) ToString() string {
-	return strings.Join([]string{util.IntToString(d.Day), util.IntToString(d.Month), util.IntToString(d.Year)}, ".")
+	return fmt.Sprintf("%d.%d.%d", d.Day, d.Month, d.Year)
 }
 
 // Set : Date veri yapisinin elemanlari ayarlanir.
