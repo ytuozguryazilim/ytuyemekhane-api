@@ -3,6 +3,7 @@ package routers
 import (
 	"errors"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/GnuYtuce/ytuyemekhane-api/crawler"
@@ -41,18 +42,29 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 
 // FoodListByCertainYear : belli bir yila gore yemek listesi donulecek.
 func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	var AllMenus models.Menus
 	year, _ := util.StringToInt(p.ByName("year"))
 	if err := util.IsYearSuitable(year); err != nil {
 		sender.Err(w, err)
 		return
 	}
+
+	var AllMenus models.Menus
+	c := make(chan models.Menus, 12)
+
+	var wg sync.WaitGroup
+	wg.Add(12)
 	for month := 1; month <= 12; month++ {
 		url := util.CreateURL(YtuYemekhaneURL, month, year)
-		menus, err := crawler.Crawl(url)
-		if err != nil {
-			continue
-		}
+		go func(url string) {
+			defer wg.Done()
+			menus, _ := crawler.Crawl(url)
+			c <- menus
+		}(url)
+	}
+	wg.Wait()
+	close(c)
+	for menus := range c {
+		menus.Print()
 		AllMenus = append(AllMenus, menus...)
 	}
 	if len(AllMenus) > 0 {
