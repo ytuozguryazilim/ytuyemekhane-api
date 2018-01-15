@@ -25,7 +25,7 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 		Month: int(now.Month()),
 		Year:  now.Year(),
 	}
-	url := YtuYemekhaneURL + util.CreateVirtualPATH(date.Month, date.Year)
+	url := util.CreateURL(YtuYemekhaneURL, date.Month, date.Year)
 	menus, err := crawler.Crawl(url)
 	if err != nil {
 		sender.Err(w, err)
@@ -44,7 +44,7 @@ func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.
 	var AllMenus models.Menus
 	year, _ := util.StringToInt(p.ByName("year"))
 	for month := 1; month <= 12; month++ {
-		url := YtuYemekhaneURL + util.CreateVirtualPATH(month, year)
+		url := util.CreateURL(YtuYemekhaneURL, month, year)
 		menus, err := crawler.Crawl(url)
 		if err != nil {
 			continue
@@ -62,7 +62,7 @@ func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.
 func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	month, _ := util.StringToInt(p.ByName("month"))
 	year, _ := util.StringToInt(p.ByName("year"))
-	url := YtuYemekhaneURL + util.CreateVirtualPATH(month, year)
+	url := util.CreateURL(YtuYemekhaneURL, month, year)
 	menus, err := crawler.Crawl(url)
 	if err != nil {
 		sender.Err(w, err)
@@ -81,7 +81,7 @@ func FoodListByCertainTime(w http.ResponseWriter, r *http.Request, p httprouter.
 		Month: month,
 		Year:  year,
 	}
-	url := YtuYemekhaneURL + util.CreateVirtualPATH(date.Month, date.Year)
+	url := util.CreateURL(YtuYemekhaneURL, date.Month, date.Year)
 	menus, err := crawler.Crawl(url)
 	if err != nil {
 		sender.Err(w, err)
