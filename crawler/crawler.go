@@ -12,7 +12,7 @@ import (
 
 // Crawl : sitedeki menu datalarini cikartir.
 func Crawl(url string) (models.Menus, error) {
-	fmt.Println(url)
+	fmt.Printf("Crawl: %s\n", url)
 	var menus models.Menus
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
