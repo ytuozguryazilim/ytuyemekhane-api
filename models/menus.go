@@ -21,3 +21,12 @@ func (ms Menus) SearchMenuByDate(d Date) (Menu, error) {
 	}
 	return Menu{}, errors.New("Bu tarihe ait herhangi bir menu yok")
 }
+
+// Print : Butun Menulerin bilgileri ekrana basar.
+func (ms Menus) Print() {
+	for _, m := range ms {
+		fmt.Println("Date: ", m.Date.ToString())
+		fmt.Println("Lunch: ", m.Lunch)
+		fmt.Println("Dinner: ", m.Dinner)
+	}
+}
