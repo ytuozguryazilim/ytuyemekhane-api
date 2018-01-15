@@ -20,11 +20,17 @@ func StringToInt(value string) (int, error) {
 	return strconv.Atoi(value)
 }
 
-// CreateVirtualPATH :
-func CreateVirtualPATH(values ...int) string {
+// CreateURL :
+func CreateURL(values ...interface{}) string {
 	var result string
 	for _, value := range values {
-		result = result + "/" + IntToString(value)
+		switch value.(type) {
+		case int:
+			result += IntToString(value.(int))
+		case string:
+			result += value.(string)
+		}
+		result += "/"
 	}
 	return result
 }
