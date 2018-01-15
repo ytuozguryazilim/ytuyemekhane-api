@@ -43,6 +43,10 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	var AllMenus models.Menus
 	year, _ := util.StringToInt(p.ByName("year"))
+	if err := util.IsYearSuitable(year); err != nil {
+		sender.Err(w, err)
+		return
+	}
 	for month := 1; month <= 12; month++ {
 		url := util.CreateURL(YtuYemekhaneURL, month, year)
 		menus, err := crawler.Crawl(url)
@@ -62,6 +66,14 @@ func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.
 func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	month, _ := util.StringToInt(p.ByName("month"))
 	year, _ := util.StringToInt(p.ByName("year"))
+	if err := util.IsYearSuitable(year); err != nil {
+		sender.Err(w, err)
+		return
+	}
+	if err := util.IsMonthSuitable(month); err != nil {
+		sender.Err(w, err)
+		return
+	}
 	url := util.CreateURL(YtuYemekhaneURL, month, year)
 	menus, err := crawler.Crawl(url)
 	if err != nil {
@@ -76,6 +88,18 @@ func FoodListByCertainTime(w http.ResponseWriter, r *http.Request, p httprouter.
 	day, _ := util.StringToInt(p.ByName("day"))
 	month, _ := util.StringToInt(p.ByName("month"))
 	year, _ := util.StringToInt(p.ByName("year"))
+	if err := util.IsYearSuitable(year); err != nil {
+		sender.Err(w, err)
+		return
+	}
+	if err := util.IsMonthSuitable(month); err != nil {
+		sender.Err(w, err)
+		return
+	}
+	if err := util.IsDaySuitable(day); err != nil {
+		sender.Err(w, err)
+		return
+	}
 	date := models.Date{
 		Day:   day,
 		Month: month,
