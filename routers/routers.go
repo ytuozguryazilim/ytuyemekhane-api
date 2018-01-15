@@ -33,7 +33,7 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 	}
 	menu, err := menus.SearchMenuByDate(date)
 	if err != nil {
-		sender.JSON(w, err)
+		sender.Err(w, err)
 		return
 	}
 	sender.JSON(w, menu)
