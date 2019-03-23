@@ -1,1 +1,1 @@
-web: ytuyemekhane-api
+web: bin/ytuyemekhane-api
