@@ -1,7 +1,6 @@
 package util
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 )
@@ -34,28 +33,4 @@ func CreateURL(values ...interface{}) string {
 		result += "/"
 	}
 	return result
-}
-
-// IsYearSuitable :
-func IsYearSuitable(value int) error {
-	if value > 2010 && value < 2030 {
-		return nil
-	}
-	return errors.New("2010 ile 2030 arasinda bir yil secin:)")
-}
-
-// IsMonthSuitable :
-func IsMonthSuitable(value int) error {
-	if value > 0 && value < 13 {
-		return nil
-	}
-	return errors.New("1 ile 12 arasinda bir ay secin:)")
-}
-
-// IsDaySuitable :
-func IsDaySuitable(value int) error {
-	if value > 0 && value < 32 {
-		return nil
-	}
-	return errors.New("1 ile 31 arasinda bir gun secin:)")
 }

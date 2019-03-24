@@ -26,6 +26,11 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 		Month: int(now.Month()),
 		Year:  now.Year(),
 	}
+	if err := date.IsValid(); err != nil {
+		sender.Err(w, err)
+		return
+	}
+
 	url := util.CreateURL(YtuYemekhaneURL, date.Month, date.Year)
 	menus, err := crawler.Crawl(url)
 	if err != nil {
@@ -43,7 +48,12 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 // FoodListByCertainYear : belli bir yila gore yemek listesi donulecek.
 func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	year, _ := util.StringToInt(p.ByName("year"))
-	if err := util.IsYearSuitable(year); err != nil {
+	date := models.Date{
+		Day:   0,
+		Month: 0,
+		Year:  year,
+	}
+	if err := date.IsValid(); err != nil {
 		sender.Err(w, err)
 		return
 	}
@@ -78,14 +88,16 @@ func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.
 func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	month, _ := util.StringToInt(p.ByName("month"))
 	year, _ := util.StringToInt(p.ByName("year"))
-	if err := util.IsYearSuitable(year); err != nil {
+	date := models.Date{
+		Day:   0,
+		Month: month,
+		Year:  year,
+	}
+	if err := date.IsValid(); err != nil {
 		sender.Err(w, err)
 		return
 	}
-	if err := util.IsMonthSuitable(month); err != nil {
-		sender.Err(w, err)
-		return
-	}
+
 	url := util.CreateURL(YtuYemekhaneURL, month, year)
 	menus, err := crawler.Crawl(url)
 	if err != nil {
@@ -100,23 +112,16 @@ func FoodListByCertainTime(w http.ResponseWriter, r *http.Request, p httprouter.
 	day, _ := util.StringToInt(p.ByName("day"))
 	month, _ := util.StringToInt(p.ByName("month"))
 	year, _ := util.StringToInt(p.ByName("year"))
-	if err := util.IsYearSuitable(year); err != nil {
-		sender.Err(w, err)
-		return
-	}
-	if err := util.IsMonthSuitable(month); err != nil {
-		sender.Err(w, err)
-		return
-	}
-	if err := util.IsDaySuitable(day); err != nil {
-		sender.Err(w, err)
-		return
-	}
 	date := models.Date{
 		Day:   day,
 		Month: month,
 		Year:  year,
 	}
+	if err := date.IsValid(); err != nil {
+		sender.Err(w, err)
+		return
+	}
+
 	url := util.CreateURL(YtuYemekhaneURL, date.Month, date.Year)
 	menus, err := crawler.Crawl(url)
 	if err != nil {
