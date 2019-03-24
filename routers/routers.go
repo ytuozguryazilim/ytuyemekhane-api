@@ -13,11 +13,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-var (
-	// YtuYemekhaneURL : yildiz teknik yemekhane listersini cekilecegi site.
-	YtuYemekhaneURL = "http://www.sks.yildiz.edu.tr/yemekmenu"
-)
-
 // FoodListByCurrentTime : suanki zamana gore yemek listesi donulecek.
 func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	now := time.Now()
@@ -31,8 +26,7 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 		return
 	}
 
-	url := util.CreateURL(YtuYemekhaneURL, date.Month, date.Year)
-	menus, err := crawler.Crawl(url)
+	menus, err := crawler.Crawl(date)
 	if err != nil {
 		sender.Err(w, err)
 		return
@@ -64,12 +58,15 @@ func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.
 	var wg sync.WaitGroup
 	wg.Add(12)
 	for month := 1; month <= 12; month++ {
-		url := util.CreateURL(YtuYemekhaneURL, month, year)
-		go func(url string) {
+		tempDate := models.Date{
+			Year:  date.Year,
+			Month: month,
+		}
+		go func(_date models.Date) {
 			defer wg.Done()
-			menus, _ := crawler.Crawl(url)
+			menus, _ := crawler.Crawl(_date)
 			c <- menus
-		}(url)
+		}(tempDate)
 	}
 	wg.Wait()
 	close(c)
@@ -98,8 +95,7 @@ func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p htt
 		return
 	}
 
-	url := util.CreateURL(YtuYemekhaneURL, month, year)
-	menus, err := crawler.Crawl(url)
+	menus, err := crawler.Crawl(date)
 	if err != nil {
 		sender.Err(w, err)
 		return
@@ -122,8 +118,7 @@ func FoodListByCertainTime(w http.ResponseWriter, r *http.Request, p httprouter.
 		return
 	}
 
-	url := util.CreateURL(YtuYemekhaneURL, date.Month, date.Year)
-	menus, err := crawler.Crawl(url)
+	menus, err := crawler.Crawl(date)
 	if err != nil {
 		sender.Err(w, err)
 		return

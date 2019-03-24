@@ -3,16 +3,20 @@ package crawler
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/GnuYtuce/ytuyemekhane-api/models"
-	"github.com/GnuYtuce/ytuyemekhane-api/util"
 	"github.com/PuerkitoBio/goquery"
 )
 
+// YtuYemekhaneURL : yildiz teknik yemekhane listersini cekilecegi site.
+var YtuYemekhaneURL = "http://www.sks.yildiz.edu.tr/yemekmenu/"
+
 // Crawl : sitedeki menu datalarini cikartir.
-func Crawl(url string) (models.Menus, error) {
+func Crawl(date models.Date) (models.Menus, error) {
 	var menus models.Menus
+	url := createURL(date.Month, date.Year)
 	fmt.Printf("Crawl: %s\n", url)
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
@@ -23,9 +27,9 @@ func Crawl(url string) (models.Menus, error) {
 		lauchMenuStr := s.Find(".one_lunchMainMenu").Text()
 		dinnerMenuStr := s.Find(".one_dinnerMainMenu").Text()
 		dateStr := s.Find("#menuFooterFilter").Text()
-		lauchMenuStr = util.ClearText(lauchMenuStr)
-		dinnerMenuStr = util.ClearText(dinnerMenuStr)
-		dateStr = util.ClearText(dateStr)
+		lauchMenuStr = clearText(lauchMenuStr)
+		dinnerMenuStr = clearText(dinnerMenuStr)
+		dateStr = clearText(dateStr)
 
 		var menu = models.Menu{
 			Lunch:  strings.Split(lauchMenuStr, "\n"),
@@ -41,4 +45,26 @@ func Crawl(url string) (models.Menus, error) {
 	}
 
 	return menus, errors.New("Bu tarihte hic menu yok")
+}
+
+func createURL(values ...interface{}) string {
+	var result = YtuYemekhaneURL
+	for _, value := range values {
+		switch value.(type) {
+		case int:
+			result += intToString(value.(int))
+		case string:
+			result += value.(string)
+		}
+		result += "/"
+	}
+	return result
+}
+
+func clearText(orginal string) string {
+	return strings.Trim(orginal, "\n\n ")
+}
+
+func intToString(value int) string {
+	return strconv.Itoa(value)
 }
