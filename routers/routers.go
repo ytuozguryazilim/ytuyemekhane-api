@@ -21,10 +21,6 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 		Month: int(now.Month()),
 		Year:  now.Year(),
 	}
-	if err := date.IsValid(); err != nil {
-		sender.Err(w, err)
-		return
-	}
 
 	menus, err := crawler.Crawl(date)
 	if err != nil {
@@ -46,10 +42,6 @@ func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.
 		Day:   0,
 		Month: 0,
 		Year:  year,
-	}
-	if err := date.IsValid(); err != nil {
-		sender.Err(w, err)
-		return
 	}
 
 	var AllMenus models.Menus
@@ -90,10 +82,6 @@ func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p htt
 		Month: month,
 		Year:  year,
 	}
-	if err := date.IsValid(); err != nil {
-		sender.Err(w, err)
-		return
-	}
 
 	menus, err := crawler.Crawl(date)
 	if err != nil {
@@ -112,10 +100,6 @@ func FoodListByCertainTime(w http.ResponseWriter, r *http.Request, p httprouter.
 		Day:   day,
 		Month: month,
 		Year:  year,
-	}
-	if err := date.IsValid(); err != nil {
-		sender.Err(w, err)
-		return
 	}
 
 	menus, err := crawler.Crawl(date)

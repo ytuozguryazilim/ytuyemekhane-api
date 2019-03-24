@@ -2,7 +2,7 @@ package crawler
 
 import (
 	"errors"
-	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
@@ -16,8 +16,12 @@ var YtuYemekhaneURL = "http://www.sks.yildiz.edu.tr/yemekmenu/"
 // Crawl : sitedeki menu datalarini cikartir.
 func Crawl(date models.Date) (models.Menus, error) {
 	var menus models.Menus
+	if err := date.IsValid(); err != nil {
+		return menus, err
+	}
+
 	url := createURL(date.Month, date.Year)
-	fmt.Printf("Crawl: %s\n", url)
+	log.Println("Crawl: ", url)
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		return []models.Menu{}, err
