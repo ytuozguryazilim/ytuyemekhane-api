@@ -13,6 +13,10 @@ import (
 func main() {
 	port := flag.String("port", os.Getenv("PORT"), "http service port")
 	flag.Parse()
+	if *port == "" {
+		log.Fatalf("Please define the port number with the command line flags or the environment variable")
+	}
+
 	log.Printf("Go server listening on port %s", *port)
 
 	r := httprouter.New()
