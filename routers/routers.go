@@ -3,13 +3,13 @@ package routers
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
 	"github.com/GnuYtuce/ytuyemekhane-api/crawler"
 	"github.com/GnuYtuce/ytuyemekhane-api/models"
 	"github.com/GnuYtuce/ytuyemekhane-api/sender"
-	"github.com/GnuYtuce/ytuyemekhane-api/util"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -37,7 +37,7 @@ func FoodListByCurrentTime(w http.ResponseWriter, r *http.Request, p httprouter.
 
 // FoodListByCertainYear : belli bir yila gore yemek listesi donulecek.
 func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	year, _ := util.StringToInt(p.ByName("year"))
+	year, _ := strconv.Atoi(p.ByName("year"))
 	date := models.Date{
 		Day:   0,
 		Month: 0,
@@ -75,8 +75,8 @@ func FoodListByCertainYear(w http.ResponseWriter, r *http.Request, p httprouter.
 
 // FoodListByCertainYearAndMonth : belli bir yil ve aya gore yemek listesi donulecek.
 func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	month, _ := util.StringToInt(p.ByName("month"))
-	year, _ := util.StringToInt(p.ByName("year"))
+	month, _ := strconv.Atoi(p.ByName("month"))
+	year, _ := strconv.Atoi(p.ByName("year"))
 	date := models.Date{
 		Day:   0,
 		Month: month,
@@ -93,9 +93,9 @@ func FoodListByCertainYearAndMonth(w http.ResponseWriter, r *http.Request, p htt
 
 // FoodListByCertainTime : belli bir zamana gore yemek listesi donulecek.
 func FoodListByCertainTime(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	day, _ := util.StringToInt(p.ByName("day"))
-	month, _ := util.StringToInt(p.ByName("month"))
-	year, _ := util.StringToInt(p.ByName("year"))
+	day, _ := strconv.Atoi(p.ByName("day"))
+	month, _ := strconv.Atoi(p.ByName("month"))
+	year, _ := strconv.Atoi(p.ByName("year"))
 	date := models.Date{
 		Day:   day,
 		Month: month,

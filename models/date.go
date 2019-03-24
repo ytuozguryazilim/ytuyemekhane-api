@@ -2,9 +2,8 @@ package models
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
-
-	"github.com/GnuYtuce/ytuyemekhane-api/util"
 )
 
 type Date struct {
@@ -25,9 +24,9 @@ const (
 func NewDate(dateStr string) *Date {
 	var d Date
 	temp := strings.Split(dateStr, ".")
-	d.Day, _ = util.StringToInt(temp[0])
-	d.Month, _ = util.StringToInt(strings.TrimLeft(temp[1], "0"))
-	d.Year, _ = util.StringToInt(temp[2])
+	d.Day, _ = strconv.Atoi(temp[0])
+	d.Month, _ = strconv.Atoi(strings.TrimLeft(temp[1], "0"))
+	d.Year, _ = strconv.Atoi(temp[2])
 	return &d
 }
 
