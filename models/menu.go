@@ -1,6 +1,8 @@
 package models
 
-import "fmt"
+import (
+	"log"
+)
 
 // Menu : veri yapisinda o gunun tarihi ve o gundeki oglen ve aksam yemek listesi tutulur.
 type Menu struct {
@@ -9,15 +11,6 @@ type Menu struct {
 	Dinner []string `json:"dinner"`
 }
 
-// Print : Menu veri yapisindaki bilgileri ekrana basar.
 func (m Menu) Print() {
-	fmt.Println("Date: ", m.Date.ToString())
-	fmt.Println("Lunch:")
-	for _, l := range m.Lunch {
-		fmt.Println(l)
-	}
-	fmt.Println("Dinner:")
-	for _, d := range m.Dinner {
-		fmt.Println(d)
-	}
+	log.Printf("Date: %s, Lunch: %s, Dinner: %s", m.Date.ToString(), m.Lunch, m.Dinner)
 }
